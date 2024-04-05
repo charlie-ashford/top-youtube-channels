@@ -30,9 +30,16 @@
     h1 {
       font-size: 36px;
       font-weight: 700;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       color: #333;
       text-align: center;
+    }
+
+    .made-by {
+      font-size: 16px;
+      text-align: center;
+      margin-top: 5px; 
+      margin-bottom: 15px;
     }
 
     .filters-container {
@@ -40,6 +47,7 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
+      margin-top: 15px;
       margin-bottom: 20px;
     }
 
@@ -110,6 +118,7 @@
 <body>
   <div class="container">
     <h1>Top 10,000 YouTube Channels</h1>
+    <h5 class="made-by">Made by <a href="https://twitter.com/charlieashfordd" target="_blank">Charlie Ashford</a></h5>
     <div class="filters-container">
       <div style="flex-grow: 1;">
         <input type="text" id="searchInput" placeholder="Search" class="filter-select">
@@ -126,7 +135,7 @@
     <div class="filters-container">
       <div style="flex-grow: 1;">
         <select id="filterSubSelect" class="filter-select">
-          <option value="all">All Channels</option>
+          <option value="all">All Channels (Subscribers)</option>
           <option value="100m">Channels with 100M+ subscribers</option>
           <option value="50m">Channels with 50M+ subscribers</option>
           <option value="20m">Channels with 20M+ subscribers</option>
@@ -136,7 +145,7 @@
       </div>
       <div>
         <select id="filterViewSelect" class="filter-select">
-          <option value="all">All Views</option>
+          <option value="all">All Channels (Views)</option>
           <option value="1b">Channels with 1B+ average monthly views</option>
           <option value="500m">Channels with 500M+ average monthly views</option>
           <option value="100m">Channels with 100M+ average monthly views</option>
