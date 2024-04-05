@@ -207,11 +207,11 @@
             const matchName = channel.title.toLowerCase().includes(searchTerm);
             const matchSubSize =
               filterSubValue === 'all' ||
+              (filterSubValue === '5m' && channel.sub_num >= 5000000) ||
               (filterSubValue === '10m' && channel.sub_num >= 10000000) ||
               (filterSubValue === '20m' && channel.sub_num >= 20000000) ||
               (filterSubValue === '50m' && channel.sub_num >= 50000000) ||
-              (filterSubValue === '100m' && channel.sub_num >= 100000000) ||
-              (filterSubValue === '1b' && channel.sub_num >= 1000000000);
+              (filterSubValue === '100m' && channel.sub_num >= 100000000);
             const matchViewSize =
               filterViewValue === 'all' ||
               (filterViewValue === '0' && channel.total_views > 0) ||
