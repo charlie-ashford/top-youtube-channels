@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MrBeast Channel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .channel-header {
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            margin-bottom: 20px;
+        }
+        .channel-header img {
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .channel-header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #333;
+        }
+        .subscribers {
+            font-size: 36px;
+            color: #555;
+            text-align: center; 
+            margin-bottom: 30px;
+            overflow: hidden; /* Ensure smooth animation */
+        }
+        .subscribers span {
+            display: inline-block;
+            transition: transform 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="channel-header">
+            <img src="https://yt3.ggpht.com/fxGKYucJAVme-Yz4fsdCroCFCrANWqw0ql4GYuvx8Uq4l_euNJHgE-w9MTkLQA805vWCi-kE0g=s176-c-k-c0x00ffffff-no-rj" alt="Profile Picture">
+            <h1>MrBeast</h1>
+        </div>
+        <p class="subscribers" id="subscriberCount">Estimated Subscribers: <span id="odometer">Loading...</span></p>
+    </div>
+
+    <script>
+        const apiUrl = 'https://nia-statistics.com/api/get?platform=youtube&type=channel&id=UCX6OQ3DkcsbYNE6H8uQQuVA';
+        const odometerElement = document.getElementById('odometer');
+        let currentCount = 0;
+        let targetCount = 0;
+        let animationFrameId = null;
+
+        function updateSubscriberCount() {
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    targetCount = data.estSubCount;
+                    animateCount();
+                })
+                .catch(error => {
+                    console.error('Error fetching subscriber count:', error);
+                });
+        }
+
+        function animateCount() {
+    const difference = targetCount - currentCount;
+    const duration = 2500; // 3 seconds in milliseconds
+    const framesPerSecond = 60; // Number of frames per second for smooth animation
+    const totalFrames = (duration / 1000) * framesPerSecond;
+    const step = difference / totalFrames;
+
+    let frame = 0;
+    const animationInterval = setInterval(() => {
+        currentCount += step;
+        odometerElement.innerText = Math.round(currentCount).toLocaleString();
+
+        frame++;
+        if (frame >= totalFrames) {
+            clearInterval(animationInterval);
+            currentCount = targetCount;
+            odometerElement.innerText = targetCount.toLocaleString();
+        }
+    }, duration / totalFrames);
+}
+
+        updateSubscriberCount();
+
+        setInterval(updateSubscriberCount, 2500); // Update every 3 seconds
+    </script>
+</body>
+</html>
