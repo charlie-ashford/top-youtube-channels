@@ -1,359 +1,607 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Top YouTube Channels</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f0f0f0;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #fff;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-    }
-
-    h1 {
-      font-size: 36px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: #333;
-      text-align: center;
-    }
-
-    .made-by {
-      text-align: center;
-      margin-top: 10px; 
-      margin-bottom: 20px; 
-      font-size: 14px;
-      color: #5b5b5b;
-    }
-
-    .made-by a {
-      color: #171717;
-      text-decoration: underline;
-    }
-
-    .max-channels-container {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      margin-bottom: 10px;
-    }
-
-    .max-channels-container label {
-      margin-right: 10px;
-      font-size: 16px;
-      color: #333;
-    }
-
-    .filter-select,
-    .sort-select {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 14px;
-      outline: none;
-      width: 100%;
-      margin-bottom: 10px;
-    }
-
-    .search-container {
-      margin-bottom: 10px;
-    }
-
-    .search-container input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .filters-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .channel-list {
-      list-style: none;
-      padding: 0;
-    }
-
-    .channel-item {
-      display: flex;
-      align-items: center;
-      padding: 15px;
-      border-bottom: 1px solid #ddd;
-      transition: background-color 0.3s ease;
-    }
-
-    .channel-item:hover {
-      background-color: #f9f9f9;
-    }
-
-    .channel-item img {
-      width: 80px;
-      height: 80px;
-      margin-right: 15px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .channel-info {
-      flex-grow: 1;
-    }
-
-    .channel-info h3 {
-      margin-bottom: 5px;
-      font-size: 18px;
-      font-weight: 700;
-      color: #333;
-    }
-
-    .channel-info p {
-      margin-bottom: 3px;
-      font-size: 14px;
-      color: #555;
-    }
-
-    .channel-info p span {
-      font-weight: bold;
-      color: #000;
-    }
-
-    .download-button {
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      margin-bottom: 10px;
-    }
-
-    .download-button:hover {
-      background-color: #45a049;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="container">
-    <h1>Top YouTube Channels</h1>
-    <h5 class="made-by">A subsidiary of <a href="https://discord.com/oauth2/authorize?client_id=1198800543448055928" target="_blank" style="text-decoration: none;"><strong>Communitrics</strong></a> | Made by <a href="https://twitter.com/charlieashfordd" target="_blank" style="text-decoration: none;"><strong>Charlie Ashford</strong></a></h5>
-    <h3 class="made-by">Note: Average monthly views is INCORRECT. We are working on fixing this. </strong></a></h3>
-    <div class="search-container">
-      <input type="text" id="searchInput" placeholder="Search" class="filter-select">
-    </div>
-    <div class="filters-container">
-      <select id="maxChannelsSelect" class="filter-select">
-        <option value="50" selected>Top 50 Channels</option>
-        <option value="100" selected>Top 100 Channels</option>
-        <option value="500">Top 500 Channels</option>
-        <option value="1000">Top 1,000 Channels</option>
-        <option value="5000">Top 5,000 Channels</option>
-        <option value="10000">Top 10,000 Channels</option>
-      </select>
-      <select id="filterSubSelect" class="filter-select">
-        <option value="all">All Channels (Subscribers)</option>
-        <option value="100m">Channels with 100M+ subscribers</option>
-        <option value="50m">Channels with 50M+ subscribers</option>
-        <option value="20m">Channels with 20M+ subscribers</option>
-        <option value="10m">Channels with 10M+ subscribers</option>
-        <option value="5m">Channels with 5M+ subscribers</option>
-      </select>
-      <select id="filterViewSelect" class="filter-select">
-        <option value="all">All Channels (Views)</option>
-        <option value="1b">Channels with 1B+ average monthly views</option>
-        <option value="500m">Channels with 500M+ average monthly views</option>
-        <option value="100m">Channels with 100M+ average monthly views</option>
-        <option value="50m">Channels with 50M+ average monthly views</option>
-        <option value="0">Channels with 0+ average monthly views</option>
-      </select>
-      <select id="sortSelect" class="sort-select">
-        <option value="subs-desc">Sort by Subscribers (High to Low)</option>
-        <option value="subs-asc">Sort by Subscribers (Low to High)</option>
-        <option value="views-desc">Sort by Average Monthly Views (High to Low)</option>
-        <option value="views-asc">Sort by Average Monthly Views (Low to High)</option>
-      </select>
-    </div>
-    <button id="downloadCSV" class="download-button">Download CSV</button>
-    <div class="total-channels" id="totalChannels"></div>
-    <ul class="channel-list" id="channelList"></ul>
-  </div>
-
-  <script>
-    let countryMap = {};
-
-    async function fetchCountryNames() {
-      try {
-        const response = await fetch('https://restcountries.com/v3.1/all');
-        const data = await response.json();
-        countryMap = {};
-
-        data.forEach(country => {
-          const countryCode = country.cca2;
-          const countryName = country.name.common;
-          countryMap[countryCode] = countryName;
-        });
-
-        return countryMap;
-      } catch (error) {
-        console.error('Error fetching country names:', error);
-        return {};
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Top YouTube Channels</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-    }
 
-    async function fetchChannels(maxChannels) {
-      try {
-        console.log('Fetching data...');
-        const response = await fetch(`https://corsproxy.io/?https://www.noxinfluencer.com/ws/mobile/channel?pageSize=${maxChannels}&rankSize=10000`);
-        console.log('Response received:', response);
-        const data = await response.json();
-        console.log('Data fetched successfully:', data);
-        let channels = data.retDataList;
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f0f0f0;
+      }
 
-        await fetchCountryNames();
-        const totalChannels = document.getElementById('totalChannels');
-        totalChannels.innerHTML = `Total Channels: <span>${channels.length.toLocaleString()}</span>`;
+      .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+      }
 
-        const channelList = document.getElementById('channelList');
-        const searchInput = document.getElementById('searchInput');
-        const filterSubSelect = document.getElementById('filterSubSelect');
-        const filterViewSelect = document.getElementById('filterViewSelect');
-        const sortSelect = document.getElementById('sortSelect');
+      .header-container {
+        position: relative;
+        text-align: center;
+        margin-bottom: 20px;
+      }
 
-        function renderChannels() {
-          const searchTerm = searchInput.value.trim().toLowerCase();
-          const filterSubValue = filterSubSelect.value;
-          const filterViewValue = filterViewSelect.value;
-          const sortValue = sortSelect.value;
+      .title-container {
+        display: inline-block;
+      }
 
-          let filteredChannels = channels.filter(channel => {
-            const matchName = channel.title.toLowerCase().includes(searchTerm);
-            const matchSubSize =
-              filterSubValue === 'all' ||
-              (filterSubValue === '5m' && channel.sub_num >= 5000000) ||
-              (filterSubValue === '10m' && channel.sub_num >= 10000000) ||
-              (filterSubValue === '20m' && channel.sub_num >= 20000000) ||
-              (filterSubValue === '50m' && channel.sub_num >= 50000000) ||
-              (filterSubValue === '100m' && channel.sub_num >= 100000000);
-            const matchViewSize =
-              filterViewValue === 'all' ||
-              (filterViewValue === '0' && channel.total_views > 0) ||
-              (filterViewValue === '50m' && channel.total_views >= 50000000) ||
-              (filterViewValue === '100m' && channel.total_views >= 100000000) ||
-              (filterViewValue === '500m' && channel.total_views >= 500000000) ||
-              (filterViewValue === '1b' && channel.total_views >= 1000000000);
-            return matchName && matchSubSize && matchViewSize;
+      h1 {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      h1,
+      .made-by {
+        text-align: center;
+      }
+
+      .download-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+
+      .exclude-companies-container {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      .made-by {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        font-size: 14px;
+        color: #5b5b5b;
+      }
+
+      .incorrect {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        font-size: 14px;
+        color: #171717;
+      }
+
+
+      .made-by a {
+        color: #171717;
+        text-decoration: underline;
+      }
+
+      .max-channels-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        margin-bottom: 10px;
+      }
+
+      .max-channels-container label {
+        margin-right: 10px;
+        font-size: 16px;
+        color: #333;
+      }
+
+      .filter-select,
+      .sort-select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+        outline: none;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .search-container {
+        margin-bottom: 20px;
+      }
+
+      .search-container input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+
+      .search-container input[type="text"]:focus {
+        border-color: #4caf50;
+      }
+
+      .filters-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .channel-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .channel-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        transition: background-color 0.3s ease;
+      }
+
+      .channel-item:hover {
+        background-color: #f9f9f9;
+      }
+
+      .channel-item img {
+        width: 80px;
+        height: 80px;
+        margin-right: 15px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .channel-info {
+        flex-grow: 1;
+      }
+
+      .channel-info h3 {
+        margin-bottom: 5px;
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+      }
+
+      .channel-info p {
+        margin-bottom: 3px;
+        font-size: 14px;
+        color: #555;
+      }
+
+      .channel-info p span {
+        font-weight: bold;
+        color: #000;
+      }
+
+      .channel-info a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .channel-info a:hover {
+        color: #0073e6;
+      }
+
+      .download-button {
+        padding: 12px 24px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-left: 20px;
+      }
+
+      .download-button:hover {
+        background-color: #45a049;
+      }
+
+      .action-buttons {
+        margin-bottom: 20px;
+      }
+
+      .exclude-companies-container {
+        display: flex;
+        align-items: center;
+      }
+
+      .exclude-companies-container input {
+        margin-right: 10px;
+        transform: scale(1.2);
+      }
+
+      .exclude-companies-container label {
+        font-size: 14px;
+        color: #333;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header-container">
+        <div class="title-container">
+          <h1>Top YouTube Channels</h1>
+          <h5 class="made-by">
+            A subsidiary of
+            <a
+              href="https://discord.com/oauth2/authorize?client_id=1198800543448055928"
+              target="_blank"
+              style="text-decoration: none"
+              ><strong>Communitrics</strong></a
+            >
+            | Made by
+            <a
+              href="https://twitter.com/charlieashfordd"
+              target="_blank"
+              style="text-decoration: none"
+              ><strong>Charlie Ashford</strong></a
+            >
+          </h5>
+          <h3 class="incorrect">
+            Note: Average monthly views is INCORRECT. We are working on fixing
+            this.
+          </h3>
+        </div>
+        <button id="downloadCSV" class="download-button">Download CSV</button>
+      </div>
+
+      <div class="search-container">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search"
+          class="filter-select"
+        />
+      </div>
+
+      <div class="filters-container">
+        <select id="maxChannelsSelect" class="filter-select">
+          <option value="50" selected>Top 50 Channels</option>
+          <option value="100" selected>Top 100 Channels</option>
+          <option value="500">Top 500 Channels</option>
+          <option value="1000">Top 1,000 Channels</option>
+          <option value="5000">Top 5,000 Channels</option>
+          <option value="10000">Top 10,000 Channels</option>
+        </select>
+        <select id="filterSubSelect" class="filter-select">
+          <option value="all">All Channels (Subscribers)</option>
+          <option value="100m">Channels with 100M+ subscribers</option>
+          <option value="50m">Channels with 50M+ subscribers</option>
+          <option value="20m">Channels with 20M+ subscribers</option>
+          <option value="10m">Channels with 10M+ subscribers</option>
+          <option value="5m">Channels with 5M+ subscribers</option>
+        </select>
+        <select id="filterViewSelect" class="filter-select">
+          <option value="all">All Channels (Views)</option>
+          <option value="1b">Channels with 1B+ average monthly views</option>
+          <option value="500m">
+            Channels with 500M+ average monthly views
+          </option>
+          <option value="100m">
+            Channels with 100M+ average monthly views
+          </option>
+          <option value="50m">Channels with 50M+ average monthly views</option>
+          <option value="0">Channels with 0+ average monthly views</option>
+        </select>
+        <select id="sortSelect" class="sort-select">
+          <option value="subs-desc">Sort by Subscribers (Descending)</option>
+          <option value="subs-asc">Sort by Subscribers (Ascending)</option>
+          <option value="views-desc">Sort by Views (Descending)</option>
+          <option value="views-asc">Sort by Views (Ascending)</option>
+        </select>
+      </div>
+
+      <div class="exclude-companies-container">
+        <input type="checkbox" id="excludeCompanies" />
+        <label for="excludeCompanies"
+          >Exclude Companies (only top ~250 channels, top 100 creators)</label
+        >
+      </div>
+
+      <div class="total-channels" id="totalChannels"></div>
+      <ul class="channel-list" id="channelList"></ul>
+    </div>
+
+    <script>
+      const creatorIds = [
+        "UC2tsySbe9TNrI-xh2lximHA",
+        "UCqq5n-Oe-r1EEHI3yvhVJcA",
+        "UCz7PhJtc2G8Sre2vCLfmqAw",
+        "UC5gxP-2QqIh_09djvlm9Xcg",
+        "UCZs0WwC0Dn_noiQE2BHSTKg",
+        "UCd5ApCORQsMOZZz5E9oVeFA",
+        "UCwohKbRK2QnojtLh3p7xwaA",
+        "UC4wEPe5mrHGAUjjTfXH_C-Q",
+        "UC7eHZXheF8nVOfwB2PEslMw",
+        "UCyQqzYXQBUWgBTn4pw_fFSQ",
+        "UCY-at5vWhDoMJ8y0kIPFwDA",
+        "UCUaT_39o1x6qWjz7K2pWcgw",
+        "UCdX5KXiCTPYWYZscfphgQ4g",
+        "UCwVg9btOceLQuNCdoQk9CXg",
+        "UC6gVx_vALsYT-z_u1djJbBQ",
+        "UCU2zNeYhf9pi_wSqFbYE96w",
+        "UC56D-IHcUvLVFTX_8NpQMXg",
+        "UCj22tfcQrWG7EMEKS0qLeEg",
+        "UC1a2ZCw7tugRZYRMnecNj3A",
+        "UCWABpVNM7ysT4KGXiUpShRw",
+        "UCebC4x5l2-PQxg46Ucv9CsA",
+        "UCsSsgPaZ2GSmO6il8Cb5iGA",
+        "UCb8vrqP8Z7Oz9ZTYvUtjUHQ",
+        "UCS5Oz6CHmeoF7vSad0qqXfw",
+        "UCNRl8nOCoUvki2FNFxQZgEg",
+        "UCTheFErn4MureanSiqgKIag",
+        "UCTkXRDQl0luXxVQrRQvWS6w",
+        "UCRijo3ddMTht_IHyNSNXpNQ",
+        "UCo6y9hnRawAqtyWhRhblXqg",
+        "UCXazgXDIYyWH-yXLAkcrFxw",
+        "UC2bYhAHyaqfWlPXWBVk4BcA",
+        "UCoQm-PeHC-cbJclKJYJ8LzA",
+        "UCV306eHqgo0LvBf3Mh36AHg",
+        "UCV4xOVpbcV8SdueDCOxLXtQ",
+        "UC4hGmH5sABOA70D4fGb8qNQ",
+        "UC56dNUTok1pgvpY75CsJQ4Q",
+        "UCunqjMN6EEbXjzU-RvwJrig",
+        "UCZJ7m7EnCNodqnu5SAtg8eQ",
+        "UCmzDf_a7CCFuxos7hspcWRQ",
+        "UCN4NflpHqLeHQZ91kTUVCBw",
+        "UC6QZ_ss3i_8qLV_RczPZBkw",
+        "UCYzPXprvl5Y-Sf0g4vX-m6g",
+        "UCvh1at6xpV1ytYOAzxmqUsA",
+        "UC5tuYcCdiKuF5Y2ZonuarwA",
+        "UCzoUWqjCbcfWFdOMvoep8FA",
+        "UCYiGq8XF7YQD00x7wAd62Zg",
+        "UCjp_3PEaOau_nT_3vnqKIvg",
+        "UCyI6QRxXArFsfWlMdvoG2hw",
+        "UCP84QWij0alw4MvzqzyfOnw",
+        "UCQZfFRohQ7UX-0CdXl-6pwQ",
+        "UCL5nlHWXVLeOsSjKH2fhmsg",
+        "UCSf0s2ogUVYpJPuzW1zpAOg",
+        "UCMsPm8-25ygqRrRe9_s1WFw",
+        "UCwD4x63A9KC7Si2RuSfg-SA",
+        "UCECJDeK0MNapZbpaOzxrUPA",
+        "UCY1kMZp36IQSyNx_9h4mpCg",
+        "UC7_YxT-KID8kRbqZo7MyscQ",
+        "UCm-Qr3k89gtXcuv2jL29XFw",
+        "UCqJ5zFEED1hWs0KNQCQuYdQ",
+        "UCeYTfGpNCmVhlxjQxBDrGPA",
+        "UCSiDGb0MnHFGjs4E2WKvShw",
+        "UCX6OQ3DkcsbYNE6H8uQQuVA",
+        "UC4-79UOlP48-QNGgCko5p2g",
+        "UCIPPMRA040LQr5QPyJEbmXA",
+        "UCHUu2HAnogpaK2UmTSJT8jg",
+        "UC6VAIqNQBc7ggiqvsOHOBqw",
+        "UC0Wju2yvRlfwqraLlz5152Q",
+        "UC-lHJZR3Gqxm24_Vd_AJ5Yw",
+        "UCzEAWIWMigRBbulQ6yVlilg",
+        "UCgKEvLp8DXCTMq4QY6wW7bw",
+        "UChMJkHCD2wdvSO7CMOuLR-w",
+        "UCbTVTephX30ZhQF5zwFppBg",
+        "UC4tS4Q_Cno5JVcIUXxQOOpA",
+        "UCt4atlExw8aj3Bm79nv1fig",
+        "UCWaOde99oeUVoXbIj3SNu9g",
+        "UCtiddfzHXNevG-yYe5vc_4Q",
+        "UCpB959t8iPrxQWj7G6n0ctQ",
+        "UCbp9MyKCTEww4CxEzc_Tp0Q",
+        "UCPW0F3QPcwARHVFULyMMr0A",
+        "UCX8pnu3DYUnx8qy8V_c6oHg",
+        "UClFN9LShD_Pv0wnSeUKbUZw",
+        "UCaHEdZtk6k7SVP-umnzifmQ",
+        "UCPuEAY09CtdTzFNWuqVZgDw",
+        "UC5c9VlYTSvBSCaoMu_GI6gQ",
+        "UCymK_3BWUcoYVVf5D_GmACQ",
+        "UCVRqK0tS3B8pVog1HwCR4pg",
+        "UCam8T03EOFBsNdR0thrFHdQ",
+        "UCj0O6W8yDuLg3iraAXKgCrQ",
+        "UC3KQ5GWANYF8lChqjZpXsQw",
+        "UCPCaXSwaos-QI03iZtx8I6g",
+        "UCVtD5iA4rUuOK5cQrB_o4ow",
+        "UCQ8TuCvcDMepleXFyOQfyOQ",
+        "UCOnIJiQuk1fDSp6p1GCZy3A",
+        "UCI78AdiI6f7VKhqW1i4B3Rw",
+        "UCq8DICunczvLuJJq414110A",
+        "UCrnQFuUabBHaw-BRhPo8xEA",
+        "UCyagEfIN1okQ-s996XAqCFQ",
+        "UCozAuGJZ5MPoijz8IE_1Gtw",
+        "UCMgapddJymOC6MBOiOqia1A",
+        "UCiVs2pnGW5mLIc1jS2nxhjg",
+      ];
+
+      let countryMap = {};
+
+      async function fetchCountryNames() {
+        try {
+          const response = await fetch("https://restcountries.com/v3.1/all");
+          const data = await response.json();
+          countryMap = {};
+
+          data.forEach((country) => {
+            const countryCode = country.cca2;
+            const countryName = country.name.common;
+            countryMap[countryCode] = countryName;
           });
 
-          if (sortValue === 'subs-desc') {
-            filteredChannels.sort((a, b) => b.sub_num - a.sub_num);
-          } else if (sortValue === 'subs-asc') {
-            filteredChannels.sort((a, b) => a.sub_num - b.sub_num);
-          } else if (sortValue === 'views-desc') {
-            filteredChannels.sort((a, b) => b.total_views - a.total_views);
-          } else if (sortValue === 'views-asc') {
-            filteredChannels.sort((a, b) => a.total_views - b.total_views);
-          }
+          return countryMap;
+        } catch (error) {
+          console.error("Error fetching country names:", error);
+          return {};
+        }
+      }
 
-          channelList.innerHTML = '';
-          filteredChannels.forEach((channel, index) => {
-            const channelItem = document.createElement('li');
-            channelItem.classList.add('channel-item');
-            const countryName = countryMap[channel.country_code] || 'Unknown';
-            channelItem.innerHTML = `
+      let searchInput,
+        filterSubSelect,
+        filterViewSelect,
+        sortSelect,
+        excludeCompaniesCheckbox;
+
+      async function fetchChannels(maxChannels) {
+        try {
+          searchInput = document.getElementById("searchInput");
+          filterSubSelect = document.getElementById("filterSubSelect");
+          filterViewSelect = document.getElementById("filterViewSelect");
+          sortSelect = document.getElementById("sortSelect");
+          excludeCompaniesCheckbox =
+            document.getElementById("excludeCompanies");
+
+          console.log("Fetching data...");
+          const response = await fetch(
+            `https://corsproxy.io/?https://www.noxinfluencer.com/ws/mobile/channel?pageSize=${maxChannels}&rankSize=10000`
+          );
+          console.log("Response received:", response);
+          const data = await response.json();
+          console.log("Data fetched successfully:", data);
+          let channels = data.retDataList;
+
+          await fetchCountryNames();
+          const totalChannels = document.getElementById("totalChannels");
+          totalChannels.innerHTML = `Total Channels: <span>${channels.length.toLocaleString()}</span>`;
+
+          const channelList = document.getElementById("channelList");
+
+          function renderChannels() {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            const filterSubValue = filterSubSelect.value;
+            const filterViewValue = filterViewSelect.value;
+            const sortValue = sortSelect.value;
+            const excludeCompanies = excludeCompaniesCheckbox.checked;
+
+            let filteredChannels = channels.filter((channel) => {
+              const matchName = channel.title
+                .toLowerCase()
+                .includes(searchTerm);
+              const matchSubSize =
+                filterSubValue === "all" ||
+                (filterSubValue === "5m" && channel.sub_num >= 5000000) ||
+                (filterSubValue === "10m" && channel.sub_num >= 10000000) ||
+                (filterSubValue === "20m" && channel.sub_num >= 20000000) ||
+                (filterSubValue === "50m" && channel.sub_num >= 50000000) ||
+                (filterSubValue === "100m" && channel.sub_num >= 100000000);
+              const matchViewSize =
+                filterViewValue === "all" ||
+                (filterViewValue === "0" && channel.total_views > 0) ||
+                (filterViewValue === "50m" &&
+                  channel.total_views >= 50000000) ||
+                (filterViewValue === "100m" &&
+                  channel.total_views >= 100000000) ||
+                (filterViewValue === "500m" &&
+                  channel.total_views >= 500000000) ||
+                (filterViewValue === "1b" && channel.total_views >= 1000000000);
+              const matchCreator =
+                !excludeCompanies || creatorIds.includes(channel.id);
+
+              return matchName && matchSubSize && matchViewSize && matchCreator;
+            });
+
+            if (sortValue === "subs-desc") {
+              filteredChannels.sort((a, b) => b.sub_num - a.sub_num);
+            } else if (sortValue === "subs-asc") {
+              filteredChannels.sort((a, b) => a.sub_num - b.sub_num);
+            } else if (sortValue === "views-desc") {
+              filteredChannels.sort((a, b) => b.total_views - a.total_views);
+            } else if (sortValue === "views-asc") {
+              filteredChannels.sort((a, b) => a.total_views - b.total_views);
+            }
+
+            channelList.innerHTML = "";
+            filteredChannels.forEach((channel, index) => {
+              const channelItem = document.createElement("li");
+              channelItem.classList.add("channel-item");
+              const countryName = countryMap[channel.country_code] || "Unknown";
+              channelItem.innerHTML = `
               <img src="${channel.avatar}" alt="${channel.title}">
               <div class="channel-info">
-                <h3>#${index + 1} <a href="https://www.youtube.com/channel/${channel.id}" target="_blank">${channel.title}</a></h3>
+                <h3>#${index + 1} <a href="https://www.youtube.com/channel/${
+                channel.id
+              }" target="_blank">${channel.title}</a></h3>
                 <p><span>ID:</span> ${channel.id}</p>
                 <p><span>Subscribers:</span> ${channel.sub_num.toLocaleString()}</p>
                 <p><span>Average Monthly Views:</span> ${channel.total_views.toLocaleString()}</p>
                 <p><span>Country:</span> ${countryName}</p>
               </div>
             `;
-            channelList.appendChild(channelItem);
+              channelList.appendChild(channelItem);
+            });
+
+            totalChannels.innerHTML = `Total Channels: <span>${filteredChannels.length.toLocaleString()}</span>`;
+
+            return filteredChannels;
+          }
+
+          function downloadCSV(filteredChannels) {
+            const csvContent = [
+              [
+                "Rank",
+                "Channel ID",
+                "Channel Name",
+                "Subscribers",
+                "Average Monthly Views",
+                "Country",
+              ],
+              ...filteredChannels.map((channel, index) => [
+                index + 1,
+                channel.id,
+                channel.title,
+                channel.sub_num,
+                channel.total_views,
+                countryMap[channel.country_code] || "Unknown",
+              ]),
+            ]
+              .map((row) => row.join(","))
+              .join("\n");
+
+            const blob = new Blob([csvContent], {
+              type: "text/csv;charset=utf-8;",
+            });
+            const link = document.createElement("a");
+            if (link.download !== undefined) {
+              const url = URL.createObjectURL(blob);
+              link.setAttribute("href", url);
+              link.setAttribute("download", "youtube_channels.csv");
+              link.style.visibility = "hidden";
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }
+          }
+
+          searchInput.addEventListener("input", renderChannels);
+          filterSubSelect.addEventListener("change", renderChannels);
+          filterViewSelect.addEventListener("change", renderChannels);
+          sortSelect.addEventListener("change", renderChannels);
+          excludeCompaniesCheckbox.addEventListener("change", renderChannels);
+
+          const downloadButton = document.getElementById("downloadCSV");
+          downloadButton.addEventListener("click", () => {
+            const filteredChannels = renderChannels();
+            downloadCSV(filteredChannels);
           });
 
-          totalChannels.innerHTML = `Total Channels: <span>${filteredChannels.length.toLocaleString()}</span>`;
-
-          return filteredChannels;
+          renderChannels();
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
+      }
 
-        function downloadCSV(filteredChannels) {
-          const csvContent = [
-            ['Rank', 'Channel ID', 'Channel Name', 'Subscribers', 'Average Monthly Views', 'Country'],
-            ...filteredChannels.map((channel, index) => [
-              index + 1,
-              channel.id,
-              channel.title,
-              channel.sub_num,
-              channel.total_views,
-              countryMap[channel.country_code] || 'Unknown'
-            ])
-          ]
-            .map(row => row.join(','))
-            .join('\n');
-
-          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-          const link = document.createElement('a');
-          if (link.download !== undefined) {
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'youtube_channels.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          }
-        }
-
-        searchInput.addEventListener('input', renderChannels);
-        filterSubSelect.addEventListener('change', renderChannels);
-        filterViewSelect.addEventListener('change', renderChannels);
-        sortSelect.addEventListener('change', renderChannels);
-
-        const downloadButton = document.getElementById('downloadCSV');
-        downloadButton.addEventListener('click', () => {
-          const filteredChannels = renderChannels();
-          downloadCSV(filteredChannels);
+      document.addEventListener("DOMContentLoaded", () => {
+        const maxChannelsSelect = document.getElementById("maxChannelsSelect");
+        maxChannelsSelect.addEventListener("change", () => {
+          const maxChannels = maxChannelsSelect.value;
+          fetchChannels(maxChannels);
         });
 
-        renderChannels();
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const maxChannelsSelect = document.getElementById('maxChannelsSelect');
-      maxChannelsSelect.addEventListener('change', () => {
-        const maxChannels = maxChannelsSelect.value;
-        fetchChannels(maxChannels);
+        fetchChannels(100);
       });
-
-      fetchChannels(100); 
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
