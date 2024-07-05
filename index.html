@@ -293,12 +293,6 @@
                 <p><span>Country:</span> ${countryName}</p>
               </div>
             `;
-            channelItem.addEventListener('click', () => {
-              const youtubeLink = `https://www.youtube.com/channel/${channel.id}`;
-              window.open(youtubeLink, '_blank');
-            });
-            channelList.appendChild(channelItem);
-          });
 
           totalChannels.innerHTML = `Total Channels: <span>${filteredChannels.length.toLocaleString()}</span>`;
 
