@@ -102,7 +102,6 @@
       padding: 15px;
       border-bottom: 1px solid #ddd;
       transition: background-color 0.3s ease;
-      cursor: pointer;
     }
 
     .channel-item:hover {
@@ -286,7 +285,7 @@
             channelItem.innerHTML = `
               <img src="${channel.avatar}" alt="${channel.title}">
               <div class="channel-info">
-                <h3>#${index + 1} ${channel.title}</h3>
+                <h3>#${index + 1} <a href="https://www.youtube.com/channel/${channel.id}" target="_blank">${channel.title}</a></h3>
                 <p><span>ID:</span> ${channel.id}</p>
                 <p><span>Subscribers:</span> ${channel.sub_num.toLocaleString()}</p>
                 <p><span>Average Monthly Views:</span> ${channel.total_views.toLocaleString()}</p>
