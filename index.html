@@ -547,6 +547,7 @@
                 "Subscribers",
                 "Average Monthly Views",
                 "Country",
+                "Profile Picture URL",
               ],
               ...filteredChannels.map((channel, index) => [
                 index + 1,
@@ -555,6 +556,7 @@
                 channel.sub_num,
                 channel.total_views,
                 countryMap[channel.country_code] || "Unknown",
+                channel.avatar, 
               ]),
             ]
               .map((row) => row.join(","))
