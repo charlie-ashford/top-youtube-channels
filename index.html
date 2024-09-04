@@ -305,6 +305,8 @@
     </div>
 
     <script>
+      let countryMap = {};
+
       document.addEventListener("DOMContentLoaded", () => {
         const maxChannelsSelect = document.getElementById("maxChannelsSelect");
         maxChannelsSelect.addEventListener("change", () => {
@@ -331,7 +333,7 @@
           const data = await response.json();
           let channels = data.retDataList || [];
 
-          const countryMap = await fetchCountryNames();
+          countryMap = await fetchCountryNames();
 
           const creatorIds = [
             "UC2tsySbe9TNrI-xh2lximHA",
@@ -524,7 +526,7 @@
             channel.id,
             channel.title.replace(/"/g, ""),
             channel.sub_num,
-            countryMap[channel.country_code] || "Unknown",
+            countryMap[channel.country_code] || "Unknown", // countryMap is now accessible
             channel.avatar,
           ]),
         ]
