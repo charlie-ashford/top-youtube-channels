@@ -524,7 +524,7 @@
           ...filteredChannels.map((channel, index) => [
             index + 1,
             channel.id,
-            channel.title.replace(/["\,]/g, "")
+            channel.title.replace(/["\,]/g, ""),
             channel.sub_num,
             countryMap[channel.country_code] || "Unknown",
             channel.avatar,
