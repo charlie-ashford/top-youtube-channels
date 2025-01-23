@@ -67,6 +67,51 @@
         box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.3);
       }
 
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .animate-bounce {
+        animation: bounce 0.6s infinite;
+      }
+
+      .animate-bounce.delay-150 {
+        animation-delay: 0.15s;
+      }
+
+      .animate-bounce.delay-300 {
+        animation-delay: 0.3s;
+      }
+
+      @keyframes wave {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .dot-wave-1 {
+        animation: wave 0.6s infinite;
+      }
+      .dot-wave-2 {
+        animation: wave 0.6s infinite;
+        animation-delay: 0.15s;
+      }
+      .dot-wave-3 {
+        animation: wave 0.6s infinite;
+        animation-delay: 0.3s;
+      }
+
       @keyframes fadeInModal {
         0% {
           opacity: 0;
@@ -139,6 +184,17 @@
         </svg>
       </div>
     </header>
+
+    <div
+      id="loadingSpinner"
+      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden"
+    >
+      <div class="flex space-x-4">
+        <div class="w-6 h-6 bg-red-600 rounded-full dot-wave-1"></div>
+        <div class="w-6 h-6 bg-red-600 rounded-full dot-wave-2"></div>
+        <div class="w-6 h-6 bg-red-600 rounded-full dot-wave-3"></div>
+      </div>
+    </div>
 
     <section>
       <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -328,6 +384,18 @@
         const modalHeader = document.getElementById("modalHeader");
         const modalBody = document.getElementById("modalBody");
         const visitChannelBtn = document.getElementById("visitChannelBtn");
+        const loadingSpinner = document.getElementById("loadingSpinner");
+
+        function showLoadingSpinner() {
+          loadingSpinner.classList.remove("hidden");
+        }
+
+        function hideLoadingSpinner() {
+          const isRendered = channelList.childNodes.length > 0;
+          if (isRendered) {
+            loadingSpinner.classList.add("hidden");
+          }
+        }
 
         let channels = [];
         let countryMap = {};
@@ -352,12 +420,22 @@
           }
         }
 
-        async function fetchChannels(page = 1) {
+        async function fetchChannels(page = 1, isInitialLoad = false) {
           const size = parseInt(displayCountSelect.value, 10);
+          showLoadingSpinner();
+
+          const minimumSpinnerTime = new Promise((resolve) =>
+            setTimeout(resolve, isInitialLoad ? 1500 : 500)
+          );
+
           try {
-            const response = await axios.get(
-              `https://api.communitrics.com/api/top-channels?page=${page}&size=${size}`
-            );
+            const [response] = await Promise.all([
+              axios.get(
+                `https://api.communitrics.com/api/top-channels?page=${page}&size=${size}`
+              ),
+              minimumSpinnerTime,
+            ]);
+
             channels = response.data.channels;
             totalPages = response.data.totalPages;
             currentPage = response.data.currentPage;
@@ -372,18 +450,22 @@
             renderChannels();
           } catch (error) {
             console.error("Error fetching channels:", error);
+          } finally {
+            hideLoadingSpinner();
           }
         }
 
         function renderChannels() {
+          channelList.innerHTML = "";
+
           const searchValue = searchInput.value.toLowerCase();
           const subFilter = filterSubSelect.value;
           const sortValue = sortSelect.value;
 
           let filtered = channels.filter((ch) => {
             const matchSearch = ch.title.toLowerCase().includes(searchValue);
-
             let matchSubs = true;
+
             switch (subFilter) {
               case "100m":
                 matchSubs = ch.sub_num >= 100000000;
@@ -400,7 +482,6 @@
               default:
                 matchSubs = true;
             }
-
             return matchSearch && matchSubs;
           });
 
@@ -418,8 +499,6 @@
                 return 0;
             }
           });
-
-          channelList.innerHTML = "";
 
           filtered.forEach((channel) => {
             const countryName = countryMap[channel.country_code] || "Unknown";
@@ -467,17 +546,8 @@
           `;
 
             card.addEventListener("click", () =>
-              openModal({
-                overallRank: channel.overallRank,
-                avatar: channel.avatar,
-                title: channel.title,
-                id: channel.id,
-                subscribers: channel.sub_num,
-                views: channel.view_num,
-                country: countryName,
-              })
+              openModal({ ...channel, country: countryName })
             );
-
             channelList.appendChild(card);
           });
 
@@ -590,12 +660,15 @@
 
         async function init() {
           countryMap = await fetchCountryNames();
-          await fetchChannels();
-
+          await fetchChannels(1, true);
           searchInput.addEventListener("input", renderChannels);
-          filterSubSelect.addEventListener("change", renderChannels);
-          sortSelect.addEventListener("change", renderChannels);
-          displayCountSelect.addEventListener("change", fetchChannels);
+          filterSubSelect.addEventListener("change", () =>
+            fetchChannels(currentPage)
+          );
+          sortSelect.addEventListener("change", () =>
+            fetchChannels(currentPage)
+          );
+          displayCountSelect.addEventListener("change", () => fetchChannels(1));
           downloadButton.addEventListener("click", downloadCSV);
         }
 
