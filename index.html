@@ -331,37 +331,42 @@
 
     <div
       id="channelModal"
-      class="fixed inset-0 hidden items-center justify-center z-50 bg-black bg-opacity-60 backdrop-blur-sm"
+      class="fixed inset-0 hidden items-center justify-center z-50 bg-black bg-opacity-80 backdrop-blur-sm"
     >
       <div
-        class="relative bg-gray-800 rounded-xl shadow-xl w-full max-w-xl mx-4 sm:mx-auto p-0 modal-container overflow-hidden"
+        class="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-2xl w-full max-w-xl mx-4 sm:mx-auto p-0 modal-container overflow-hidden border border-gray-700"
         style="margin-top: 5vh"
       >
-        <div class="relative bg-[#3C3E4A] px-6 py-4 flex items-center">
+        <div
+          class="relative bg-gradient-to-r from-red-700 to-red-800 px-6 py-5 flex items-center"
+        >
           <div
             id="modalHeader"
-            class="flex-1 flex items-center space-x-4 text-gray-100"
+            class="flex-1 flex items-center space-x-4 text-white"
           ></div>
           <button
             id="closeModal"
-            class="absolute top-4 right-4 text-gray-300 hover:text-gray-100 transition"
+            class="absolute top-5 right-5 text-white/70 hover:text-white transition-colors rounded-full p-2 hover:bg-white/20"
           >
             <i class="fas fa-times text-xl"></i>
           </button>
         </div>
 
-        <div id="modalBody" class="px-6 py-4 text-gray-200"></div>
+        <div
+          id="modalBody"
+          class="px-6 py-6 bg-gray-800 text-gray-200 space-y-4"
+        ></div>
 
         <div
-          class="bg-[#3C3E4A] px-6 py-3 flex justify-end border-t border-gray-600"
+          class="bg-gradient-to-r from-gray-800 to-gray-900 px-6 py-4 flex justify-end border-t border-gray-700"
         >
           <a
             id="visitChannelBtn"
             href="#"
             target="_blank"
-            class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md shadow-md transition duration-300 transform hover:scale-105"
+            class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-5 rounded-lg shadow-lg transition duration-300 transform hover:scale-105 tracking-wide"
           >
-            <i class="fab fa-youtube mr-2"></i>
+            <i class="fab fa-youtube mr-2.5 text-lg"></i>
             Visit Channel
           </a>
         </div>
@@ -505,41 +510,49 @@
 
             const card = document.createElement("div");
             card.className = `
-            bg-gray-700 rounded-xl shadow-sm
-            transition duration-300 cursor-pointer p-4
-            border border-gray-600 flex flex-col hover-scale
+            bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-xl
+            transition duration-300 cursor-pointer p-5
+            border border-gray-700 flex flex-col hover-scale overflow-hidden
+            relative group
           `;
 
             card.innerHTML = `
-            <div class="flex items-center mb-3">
-              <img
-                src="${channel.avatar}"
-                alt="${channel.title}"
-                class="w-16 h-16 rounded-full mr-4 object-cover"
-              />
+            <div class="absolute inset-0 bg-gradient-to-r from-red-600 to-red-800 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+            
+            <div class="flex items-center mb-4 relative z-10">
+              <div class="w-20 h-20 rounded-full p-1 bg-gradient-to-br from-red-600 to-red-800 mr-4">
+                <img
+                  src="${channel.avatar}"
+                  alt="${channel.title}"
+                  class="w-full h-full rounded-full object-cover border-2 border-white/20"
+                />
+              </div>
               <div class="text-gray-100">
-                <h3 class="text-base font-bold">
-                  #${channel.overallRank} <span class="hover:text-red-400">${
-              channel.title
-            }</span>
+                <h3 class="text-lg font-bold tracking-tight">
+                  <span class="text-red-400 mr-2">#${channel.overallRank}</span>
+                  <span class="group-hover:text-red-400 transition-colors">${
+                    channel.title
+                  }</span>
                 </h3>
-                <p class="text-xs text-gray-300 mt-1">ID: ${channel.id}</p>
+                <p class="text-xs text-gray-400 mt-1">Channel ID: ${
+                  channel.id
+                }</p>
               </div>
             </div>
-            <div class="space-y-1 text-sm text-gray-200">
-              <p>
-                <i class="fas fa-user-friends text-red-400 mr-1"></i>
-                <span class="font-semibold">Subscribers:</span>
+            <div class="space-y-2 text-sm text-gray-300 relative z-10">
+              <p class="flex items-center">
+                <i class="fas fa-user-friends text-red-500 mr-2 w-4 text-center"></i>
+                <span class="font-semibold mr-1">Subscribers:</span>
                 ${channel.sub_num.toLocaleString()}
               </p>
-              <p>
-                <i class="fas fa-eye text-red-400 mr-1"></i>
-                <span class="font-semibold">Total Views:</span>
+              <p class="flex items-center">
+                <i class="fas fa-eye text-red-500 mr-2 w-4 text-center"></i>
+                <span class="font-semibold mr-1">Total Views:</span>
                 ${channel.view_num.toLocaleString()}
               </p>
-              <p>
-                <i class="fas fa-globe text-red-400 mr-1"></i>
-                <span class="font-semibold">Country:</span>
+              <p class="flex items-center">
+                <i class="fas fa-globe text-red-500 mr-2 w-4 text-center"></i>
+                <span class="font-semibold mr-1">Country:</span>
                 ${countryName}
               </p>
             </div>
@@ -555,15 +568,8 @@
         }
 
         function openModal(ch) {
-          const {
-            overallRank,
-            avatar,
-            title,
-            id,
-            subscribers,
-            views,
-            country,
-          } = ch;
+          const { overallRank, avatar, title, id, sub_num, view_num, country } =
+            ch;
 
           modalHeader.innerHTML = `
           <img
@@ -586,12 +592,12 @@
             <p>
               <i class="fas fa-user-friends text-red-400 mr-1"></i>
               <span class="font-semibold">Subscribers:</span>
-              ${subscribers.toLocaleString()}
+              ${sub_num.toLocaleString()}
             </p>
             <p>
               <i class="fas fa-eye text-red-400 mr-1"></i>
               <span class="font-semibold">Total Views:</span>
-              ${views.toLocaleString()}
+              ${view_num.toLocaleString()}
             </p>
             <p>
               <i class="fas fa-globe text-red-400 mr-1"></i>
