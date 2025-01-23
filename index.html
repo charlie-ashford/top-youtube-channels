@@ -662,12 +662,10 @@
           countryMap = await fetchCountryNames();
           await fetchChannels(1, true);
           searchInput.addEventListener("input", renderChannels);
-          filterSubSelect.addEventListener("change", () =>
-            fetchChannels(currentPage)
-          );
-          sortSelect.addEventListener("change", () =>
-            fetchChannels(currentPage)
-          );
+          filterSubSelect.addEventListener("change", renderChannels);
+          sortSelect.addEventListener("change", renderChannels);
+          filterSubSelect.addEventListener("change", renderChannels);
+          sortSelect.addEventListener("change", renderChannels);
           displayCountSelect.addEventListener("change", () => fetchChannels(1));
           downloadButton.addEventListener("click", downloadCSV);
         }
