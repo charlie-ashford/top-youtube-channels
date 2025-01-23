@@ -4,564 +4,603 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Top YouTube Channels</title>
+
     <link
       rel="icon"
       href="https://api.communitrics.com/youtube/profile?channel=communitrics"
       type="image/png"
     />
-    
+
+    <meta property="og:title" content="Top YouTube Channels" />
+    <meta
+      property="og:description"
+      content="Explore and analyze the most popular YouTube channels"
+    />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Top YouTube Channels" />
+    <meta
+      name="twitter:description"
+      content="Explore and analyze the most popular YouTube channels"
+    />
+
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
       body {
-        font-family: "Poppins", sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Helvetica, Arial, sans-serif;
+        background-color: #20222d;
+        color: #f3f4f6;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #2b2d38;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: #4b5563;
+        border-radius: 4px;
+      }
+
+      .hover-scale {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .hover-scale:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.3);
+      }
+
+      @keyframes fadeInModal {
+        0% {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      #channelModal.show .modal-container {
+        animation: fadeInModal 0.3s ease forwards;
+      }
+
+      #channelModal.hidden {
+        display: none;
+      }
+
+      #channelModal.show {
         display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        padding: 20px;
-      }
-
-      .container {
-        max-width: 90%;
-        width: 100%;
-        padding: 30px;
-        background-color: #fff;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-        border-radius: 15px;
-        min-height: 300vh;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .header-container {
-        text-align: center;
-        margin-bottom: 30px;
-      }
-
-      h1 {
-        font-size: 42px;
-        font-weight: 700;
-        color: #2c3e50;
-      }
-
-      .made-by {
-        font-size: 14px;
-        color: #7f8c8d;
-        margin-top: 10px;
-      }
-
-      .made-by a {
-        color: #2c3e50;
-        text-decoration: none;
-      }
-
-      .download-button {
-        padding: 12px 24px;
-        background-color: #3498db;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        margin-bottom: 20px;
-        align-self: flex-end;
-      }
-
-      .download-button:hover {
-        background-color: #2980b9;
-      }
-
-      .header-content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-      }
-
-      .header-content h1 {
-        margin: 0;
-        text-align: center;
-        flex-grow: 1;
-      }
-
-      .download-button {
-        margin-left: 20px;
-        position: absolute;
-        right: 0;
-      }
-
-      .search-container {
-        margin-bottom: 20px;
-        position: relative;
-      }
-
-      .search-container input[type="text"] {
-        width: 100%;
-        padding: 15px;
-        border: 1px solid #ccc;
-        border-radius: 50px;
-        font-size: 16px;
-        outline: none;
-        transition: border-color 0.3s ease;
-        padding-left: 50px;
-      }
-
-      .search-container input[type="text"]:focus {
-        border-color: #3498db;
-      }
-
-      .search-container i {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #aaa;
-        font-size: 18px;
-      }
-
-      .filters-container {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-      }
-
-      .filter-select {
-        flex: 1;
-        padding: 10px;
-        margin-right: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 14px;
-        outline: none;
-        transition: border-color 0.3s ease;
-      }
-
-      .filter-select:last-child {
-        margin-right: 0;
-      }
-
-      .filter-select:focus {
-        border-color: #3498db;
-      }
-
-      .exclude-companies-container {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      .exclude-companies-container input {
-        margin-right: 10px;
-        transform: scale(1.2);
-      }
-
-      .exclude-companies-container label {
-        font-size: 14px;
-        color: #333;
-      }
-
-      .channel-list {
-        list-style: none;
-        padding: 0;
-        flex-grow: 1;
-        overflow-y: auto;
-      }
-
-      .channel-item {
-        display: flex;
-        align-items: center;
-        padding: 15px;
-        border-bottom: 1px solid #ddd;
-        transition: background-color 0.3s ease;
-        border-radius: 5px;
-        margin-bottom: 10px;
-      }
-
-      .channel-item:hover {
-        background-color: #f1f1f1;
-      }
-
-      .channel-item img {
-        width: 60px;
-        height: 60px;
-        margin-right: 15px;
-        border-radius: 50%;
-        object-fit: cover;
-      }
-
-      .channel-info {
-        flex-grow: 1;
-      }
-
-      .channel-info h3 {
-        margin-bottom: 5px;
-        font-size: 18px;
-        font-weight: 700;
-        color: #2c3e50;
-      }
-
-      .channel-info p {
-        margin-bottom: 3px;
-        font-size: 14px;
-        color: #555;
-      }
-
-      .channel-info p span {
-        font-weight: bold;
-        color: #000;
-      }
-
-      .channel-info a {
-        color: inherit;
-        text-decoration: none;
-        transition: color 0.3s ease;
-      }
-
-      .channel-info a:hover {
-        color: #2980b9;
-      }
-
-      .total-channels {
-        font-size: 16px;
-        margin-top: 10px;
-        color: #333;
-        text-align: left;
       }
     </style>
   </head>
 
-  <body>
-    <div class="container">
-      <div class="header-container">
-        <div class="header-content">
-          <h1>Top YouTube Channels</h1>
-          <button id="downloadCSV" class="download-button">Download CSV</button>
+  <body class="min-h-screen flex flex-col">
+    <header class="relative">
+      <div
+        class="bg-gradient-to-r from-red-700 to-red-800 text-white py-8 sm:py-12"
+      >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+          <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold">
+            <i class="fab fa-youtube mr-2"></i> Top YouTube Channels
+          </h1>
+          <p
+            class="mt-2 text-xs sm:text-sm md:text-base text-red-100 max-w-md mx-auto"
+          >
+            Explore and analyze the most popular YouTube channels
+          </p>
         </div>
-        <h5 class="made-by">
-          A subsidiary of
-          <a
-            href="https://discord.com/oauth2/authorize?client_id=1198800543448055928"
-            target="_blank"
-            ><strong>Communitrics</strong></a
-          >
-          | Made by
-          <a href="https://twitter.com/charlieashfordd" target="_blank"
-            ><strong>Charlie Ashford</strong></a
-          >
-        </h5>
       </div>
 
-      <div class="search-container">
-        <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Search channels..." />
-      </div>
-
-      <div class="filters-container">
-        <select id="maxChannelsSelect" class="filter-select">
-          <option value="50" selected>Top 50 Channels</option>
-          <option value="100">Top 100 Channels</option>
-          <option value="500">Top 500 Channels</option>
-          <option value="1000">Top 1,000 Channels</option>
-          <option value="5000">Top 5,000 Channels</option>
-          <option value="10000">Top 10,000 Channels</option>
-        </select>
-        <select id="filterSubSelect" class="filter-select">
-          <option value="all">All Channels (Subscribers)</option>
-          <option value="100m">100M+ Subscribers</option>
-          <option value="50m">50M+ Subscribers</option>
-          <option value="20m">20M+ Subscribers</option>
-          <option value="10m">10M+ Subscribers</option>
-          <option value="5m">5M+ Subscribers</option>
-        </select>
-        <select id="sortSelect" class="filter-select">
-          <option value="subs-desc">Subscribers (Descending)</option>
-          <option value="subs-asc">Subscribers (Ascending)</option>
-          <option value="views-desc">Views (Descending)</option>
-          <option value="views-asc">Views (Ascending)</option>
-        </select>
-      </div>
-
-      <div class="exclude-companies-container">
-        <input type="checkbox" id="excludeCompanies" />
-        <label for="excludeCompanies"
-          >Exclude Companies (only top ~250 channels, top 100 creators)</label
+      <div class="relative">
+        <svg
+          class="block w-full h-2 sm:h-4 md:h-6"
+          preserveAspectRatio="none"
+          viewBox="0 0 1440 320"
         >
+          <defs>
+            <linearGradient
+              id="topWaveGradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
+              <stop offset="0%" style="stop-color: #c81e1e; stop-opacity: 1" />
+              <stop
+                offset="100%"
+                style="stop-color: #9e1c2b; stop-opacity: 1"
+              />
+            </linearGradient>
+          </defs>
+          <path
+            fill="url(#topWaveGradient)"
+            fill-opacity="1"
+            d="M0,192L48,165.3C96,139,192,85,288,85.3C384,85,480,139,576,154.7C672,171,768,149,864,138.7C960,128,1056,128,1152,160C1248,192,1344,256,1392,288L1440,320L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
+          ></path>
+        </svg>
+      </div>
+    </header>
+
+    <section>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div
+          class="rounded-xl shadow-md p-4 flex flex-wrap items-center justify-between gap-4 bg-gradient-to-r from-gray-800 to-gray-700 bg-opacity-95"
+        >
+          <div
+            class="flex flex-wrap items-center gap-4 flex-grow text-gray-100"
+          >
+            <div class="relative flex-1 min-w-[150px]">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search channels..."
+                class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-600 focus:border-red-500 focus:ring-2 focus:ring-red-300 focus:outline-none text-sm bg-gray-700 placeholder-gray-400 text-gray-100 shadow-sm transition duration-300"
+              />
+              <i
+                class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300"
+              ></i>
+            </div>
+
+            <div class="flex-1 min-w-[120px]">
+              <select
+                id="filterSubSelect"
+                class="w-full px-3 py-2 border border-gray-600 rounded-md text-sm focus:border-red-500 focus:ring-2 focus:ring-red-300 focus:outline-none bg-gray-700 text-gray-100 placeholder-gray-400 shadow-sm transition duration-300"
+              >
+                <option value="all">All Channels</option>
+                <option value="100m">100M+ Subs</option>
+                <option value="50m">50M+ Subs</option>
+                <option value="20m">20M+ Subs</option>
+                <option value="10m">10M+ Subs</option>
+              </select>
+            </div>
+
+            <div class="flex-1 min-w-[120px]">
+              <select
+                id="sortSelect"
+                class="w-full px-3 py-2 border border-gray-600 rounded-md text-sm focus:border-red-500 focus:ring-2 focus:ring-red-300 focus:outline-none bg-gray-700 text-gray-100 placeholder-gray-400 shadow-sm transition duration-300"
+              >
+                <option value="subs-desc">Sort: Subs (High → Low)</option>
+                <option value="subs-asc">Sort: Subs (Low → High)</option>
+                <option value="views-desc">Sort: Views (High → Low)</option>
+                <option value="views-asc">Sort: Views (Low → High)</option>
+              </select>
+            </div>
+
+            <div class="flex-1 min-w-[120px]">
+              <select
+                id="displayCountSelect"
+                class="w-full px-3 py-2 border border-gray-600 rounded-md text-sm focus:border-red-500 focus:ring-2 focus:ring-red-300 focus:outline-none bg-gray-700 text-gray-100 placeholder-gray-400 shadow-sm transition duration-300"
+              >
+                <option value="10">Show 10 Channels</option>
+                <option value="50">Show 50 Channels</option>
+                <option value="100">Show 100 Channels</option>
+                <option value="500">Show 500 Channels</option>
+                <option value="1000">Show 1,000 Channels</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex-none">
+            <button
+              id="downloadCSV"
+              class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300 text-sm transform hover:scale-105"
+            >
+              <i class="fas fa-download mr-2"></i>
+              Download CSV
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="flex-grow w-full">
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <p
+          id="totalChannels"
+          class="text-gray-300 text-sm mb-4 font-medium tracking-wide"
+        >
+          Total Channels: 0
+        </p>
+
+        <div
+          id="channelList"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        ></div>
+      </section>
+    </main>
+
+    <footer
+      class="relative bg-gradient-to-r from-gray-900 to-gray-800 text-gray-200 mt-auto"
+    >
+      <div class="w-full h-16 bg-transparent relative">
+        <svg
+          class="absolute top-0 left-0 w-full h-full"
+          viewBox="0 0 1440 320"
+          preserveAspectRatio="none"
+        >
+          <defs>
+            <linearGradient
+              id="bottomWaveGradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
+              <stop offset="0%" style="stop-color: #20222d; stop-opacity: 1" />
+              <stop
+                offset="100%"
+                style="stop-color: #20222d; stop-opacity: 1"
+              />
+            </linearGradient>
+          </defs>
+          <path
+            fill="url(#bottomWaveGradient)"
+            fill-opacity="1"
+            d="M0,192L48,165.3C96,139,192,85,288,85.3C384,85,480,139,576,154.7C672,171,768,149,864,138.7C960,128,1056,128,1152,160C1248,192,1344,256,1392,288L1440,320L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
+          ></path>
+        </svg>
       </div>
 
-      <div class="total-channels" id="totalChannels">Total Channels: 0</div>
-      <ul class="channel-list" id="channelList"></ul>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 text-center">
+        <p class="text-xs sm:text-sm text-gray-400">
+          Made with <span class="text-red-500">❤</span> by
+          <a
+            href="https://twitter.com/charlieashfordd"
+            target="_blank"
+            class="underline hover:text-red-400"
+            >Charlie</a
+          >
+        </p>
+      </div>
+    </footer>
+
+    <div
+      id="channelModal"
+      class="fixed inset-0 hidden items-center justify-center z-50 bg-black bg-opacity-60 backdrop-blur-sm"
+    >
+      <div
+        class="relative bg-gray-800 rounded-xl shadow-xl w-full max-w-xl mx-4 sm:mx-auto p-0 modal-container overflow-hidden"
+        style="margin-top: 5vh"
+      >
+        <div class="relative bg-[#3C3E4A] px-6 py-4 flex items-center">
+          <div
+            id="modalHeader"
+            class="flex-1 flex items-center space-x-4 text-gray-100"
+          ></div>
+          <button
+            id="closeModal"
+            class="absolute top-4 right-4 text-gray-300 hover:text-gray-100 transition"
+          >
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+
+        <div id="modalBody" class="px-6 py-4 text-gray-200"></div>
+
+        <div
+          class="bg-[#3C3E4A] px-6 py-3 flex justify-end border-t border-gray-600"
+        >
+          <a
+            id="visitChannelBtn"
+            href="#"
+            target="_blank"
+            class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md shadow-md transition duration-300 transform hover:scale-105"
+          >
+            <i class="fab fa-youtube mr-2"></i>
+            Visit Channel
+          </a>
+        </div>
+      </div>
     </div>
 
     <script>
-      let countryMap = {};
-
       document.addEventListener("DOMContentLoaded", () => {
-        const maxChannelsSelect = document.getElementById("maxChannelsSelect");
-        maxChannelsSelect.addEventListener("change", () => {
-          const maxChannels = maxChannelsSelect.value;
-          fetchChannels(maxChannels);
-        });
+        const searchInput = document.getElementById("searchInput");
+        const filterSubSelect = document.getElementById("filterSubSelect");
+        const sortSelect = document.getElementById("sortSelect");
+        const displayCountSelect =
+          document.getElementById("displayCountSelect");
+        const channelList = document.getElementById("channelList");
+        const totalChannels = document.getElementById("totalChannels");
+        const downloadButton = document.getElementById("downloadCSV");
 
-        fetchChannels(50);
-      });
+        const channelModal = document.getElementById("channelModal");
+        const closeModalBtn = document.getElementById("closeModal");
+        const modalHeader = document.getElementById("modalHeader");
+        const modalBody = document.getElementById("modalBody");
+        const visitChannelBtn = document.getElementById("visitChannelBtn");
 
-      async function fetchChannels(maxChannels) {
-        try {
-          const searchInput = document.getElementById("searchInput");
-          const filterSubSelect = document.getElementById("filterSubSelect");
-          const sortSelect = document.getElementById("sortSelect");
-          const excludeCompaniesCheckbox =
-            document.getElementById("excludeCompanies");
-          const channelList = document.getElementById("channelList");
-          const totalChannels = document.getElementById("totalChannels");
+        let channels = [];
+        let countryMap = {};
+        let totalPages = 0;
+        let currentPage = 1;
 
-          const response = await fetch(
-            `https://corsproxy.io/?https://www.noxinfluencer.com/ws/mobile/channel?pageSize=${maxChannels}&rankSize=10000`
-          );
-          const data = await response.json();
-          let channels = data.retDataList || [];
+        async function fetchCountryNames() {
+          try {
+            const response = await axios.get(
+              "https://restcountries.com/v3.1/all"
+            );
+            const map = {};
+            response.data.forEach((country) => {
+              if (country.cca2) {
+                map[country.cca2] = country.name.common;
+              }
+            });
+            return map;
+          } catch (error) {
+            console.error("Error fetching country names:", error);
+            return {};
+          }
+        }
 
-          countryMap = await fetchCountryNames();
+        async function fetchChannels(page = 1) {
+          const size = parseInt(displayCountSelect.value, 10);
+          try {
+            const response = await axios.get(
+              `https://api.communitrics.com/api/top-channels?page=${page}&size=${size}`
+            );
+            channels = response.data.channels;
+            totalPages = response.data.totalPages;
+            currentPage = response.data.currentPage;
 
-          const creatorIds = [
-            "UC2tsySbe9TNrI-xh2lximHA",
-            "UCqq5n-Oe-r1EEHI3yvhVJcA",
-            "UCz7PhJtc2G8Sre2vCLfmqAw",
-            "UC5gxP-2QqIh_09djvlm9Xcg",
-            "UCZs0WwC0Dn_noiQE2BHSTKg",
-            "UCd5ApCORQsMOZZz5E9oVeFA",
-            "UCwohKbRK2QnojtLh3p7xwaA",
-            "UC4wEPe5mrHGAUjjTfXH_C-Q",
-            "UC7eHZXheF8nVOfwB2PEslMw",
-            "UCyQqzYXQBUWgBTn4pw_fFSQ",
-            "UCY-at5vWhDoMJ8y0kIPFwDA",
-            "UCUaT_39o1x6qWjz7K2pWcgw",
-            "UCdX5KXiCTPYWYZscfphgQ4g",
-            "UCwVg9btOceLQuNCdoQk9CXg",
-            "UC6gVx_vALsYT-z_u1djJbBQ",
-            "UCU2zNeYhf9pi_wSqFbYE96w",
-            "UC56D-IHcUvLVFTX_8NpQMXg",
-            "UCj22tfcQrWG7EMEKS0qLeEg",
-            "UC1a2ZCw7tugRZYRMnecNj3A",
-            "UCWABpVNM7ysT4KGXiUpShRw",
-            "UCebC4x5l2-PQxg46Ucv9CsA",
-            "UCsSsgPaZ2GSmO6il8Cb5iGA",
-            "UCb8vrqP8Z7Oz9ZTYvUtjUHQ",
-            "UCS5Oz6CHmeoF7vSad0qqXfw",
-            "UCNRl8nOCoUvki2FNFxQZgEg",
-            "UCTheFErn4MureanSiqgKIag",
-            "UCTkXRDQl0luXxVQrRQvWS6w",
-            "UCRijo3ddMTht_IHyNSNXpNQ",
-            "UCo6y9hnRawAqtyWhRhblXqg",
-            "UCXazgXDIYyWH-yXLAkcrFxw",
-            "UC2bYhAHyaqfWlPXWBVk4BcA",
-            "UCoQm-PeHC-cbJclKJYJ8LzA",
-            "UCV306eHqgo0LvBf3Mh36AHg",
-            "UCV4xOVpbcV8SdueDCOxLXtQ",
-            "UC4hGmH5sABOA70D4fGb8qNQ",
-            "UC56dNUTok1pgvpY75CsJQ4Q",
-            "UCunqjMN6EEbXjzU-RvwJrig",
-            "UCZJ7m7EnCNodqnu5SAtg8eQ",
-            "UCmzDf_a7CCFuxos7hspcWRQ",
-            "UCN4NflpHqLeHQZ91kTUVCBw",
-            "UC6QZ_ss3i_8qLV_RczPZBkw",
-            "UCYzPXprvl5Y-Sf0g4vX-m6g",
-            "UCvh1at6xpV1ytYOAzxmqUsA",
-            "UC5tuYcCdiKuF5Y2ZonuarwA",
-            "UCzoUWqjCbcfWFdOMvoep8FA",
-            "UCYiGq8XF7YQD00x7wAd62Zg",
-            "UCjp_3PEaOau_nT_3vnqKIvg",
-            "UCyI6QRxXArFsfWlMdvoG2hw",
-            "UCP84QWij0alw4MvzqzyfOnw",
-            "UCQZfFRohQ7UX-0CdXl-6pwQ",
-            "UCL5nlHWXVLeOsSjKH2fhmsg",
-            "UCSf0s2ogUVYpJPuzW1zpAOg",
-            "UCMsPm8-25ygqRrRe9_s1WFw",
-            "UCwD4x63A9KC7Si2RuSfg-SA",
-            "UCECJDeK0MNapZbpaOzxrUPA",
-            "UCY1kMZp36IQSyNx_9h4mpCg",
-            "UC7_YxT-KID8kRbqZo7MyscQ",
-            "UCm-Qr3k89gtXcuv2jL29XFw",
-            "UCqJ5zFEED1hWs0KNQCQuYdQ",
-            "UCeYTfGpNCmVhlxjQxBDrGPA",
-            "UCSiDGb0MnHFGjs4E2WKvShw",
-            "UCX6OQ3DkcsbYNE6H8uQQuVA",
-            "UC4-79UOlP48-QNGgCko5p2g",
-            "UCIPPMRA040LQr5QPyJEbmXA",
-            "UCHUu2HAnogpaK2UmTSJT8jg",
-            "UC6VAIqNQBc7ggiqvsOHOBqw",
-            "UC0Wju2yvRlfwqraLlz5152Q",
-            "UC-lHJZR3Gqxm24_Vd_AJ5Yw",
-            "UCzEAWIWMigRBbulQ6yVlilg",
-            "UCgKEvLp8DXCTMq4QY6wW7bw",
-            "UChMJkHCD2wdvSO7CMOuLR-w",
-            "UCbTVTephX30ZhQF5zwFppBg",
-            "UC4tS4Q_Cno5JVcIUXxQOOpA",
-            "UCt4atlExw8aj3Bm79nv1fig",
-            "UCWaOde99oeUVoXbIj3SNu9g",
-            "UCtiddfzHXNevG-yYe5vc_4Q",
-            "UCpB959t8iPrxQWj7G6n0ctQ",
-            "UCbp9MyKCTEww4CxEzc_Tp0Q",
-            "UCPW0F3QPcwARHVFULyMMr0A",
-            "UCX8pnu3DYUnx8qy8V_c6oHg",
-            "UClFN9LShD_Pv0wnSeUKbUZw",
-            "UCaHEdZtk6k7SVP-umnzifmQ",
-            "UCPuEAY09CtdTzFNWuqVZgDw",
-            "UC5c9VlYTSvBSCaoMu_GI6gQ",
-            "UCymK_3BWUcoYVVf5D_GmACQ",
-            "UCVRqK0tS3B8pVog1HwCR4pg",
-            "UCam8T03EOFBsNdR0thrFHdQ",
-            "UCj0O6W8yDuLg3iraAXKgCrQ",
-            "UC3KQ5GWANYF8lChqjZpXsQw",
-            "UCPCaXSwaos-QI03iZtx8I6g",
-            "UCVtD5iA4rUuOK5cQrB_o4ow",
-            "UCQ8TuCvcDMepleXFyOQfyOQ",
-            "UCOnIJiQuk1fDSp6p1GCZy3A",
-            "UCI78AdiI6f7VKhqW1i4B3Rw",
-            "UCq8DICunczvLuJJq414110A",
-            "UCrnQFuUabBHaw-BRhPo8xEA",
-            "UCyagEfIN1okQ-s996XAqCFQ",
-            "UCozAuGJZ5MPoijz8IE_1Gtw",
-            "UCMgapddJymOC6MBOiOqia1A",
-            "UCiVs2pnGW5mLIc1jS2nxhjg",
-          ];
-
-          function renderChannels() {
-            channelList.innerHTML = "";
-
-            let filteredChannels = channels
-              .filter((channel) => {
-                const query = searchInput.value.toLowerCase();
-                return channel.title.toLowerCase().includes(query);
-              })
-              .filter((channel) => {
-                const subFilter = filterSubSelect.value;
-                if (subFilter === "100m") return channel.sub_num >= 100000000;
-                if (subFilter === "50m") return channel.sub_num >= 50000000;
-                if (subFilter === "20m") return channel.sub_num >= 20000000;
-                if (subFilter === "10m") return channel.sub_num >= 10000000;
-                if (subFilter === "5m") return channel.sub_num >= 5000000;
-                return true;
-              })
-              .filter((channel) => {
-                if (excludeCompaniesCheckbox.checked) {
-                  return creatorIds.includes(channel.id);
-                }
-                return true;
-              })
-              .sort((a, b) => {
-                if (sortSelect.value === "subs-desc")
-                  return b.sub_num - a.sub_num;
-                if (sortSelect.value === "subs-asc")
-                  return a.sub_num - b.sub_num;
-                if (sortSelect.value === "views-desc")
-                  return b.view_num - a.view_num;
-                if (sortSelect.value === "views-asc")
-                  return a.view_num - b.view_num;
-              });
-
-            filteredChannels.forEach((channel, index) => {
-              const channelItem = document.createElement("li");
-              channelItem.classList.add("channel-item");
-              const countryName = countryMap[channel.country_code] || "Unknown";
-              channelItem.innerHTML = `
-                <img src="${channel.avatar}" alt="${channel.title}">
-                <div class="channel-info">
-                  <h3>#${index + 1} <a href="https://www.youtube.com/channel/${
-                channel.id
-              }" target="_blank">${channel.title}</a></h3>
-                  <p><span>ID:</span> ${channel.id}</p>
-                  <p><span>Subscribers:</span> ${channel.sub_num.toLocaleString()}</p>
-                  <p><span>Country:</span> ${countryName}</p>
-                </div>
-              `;
-              channelList.appendChild(channelItem);
+            const sortedBySubs = [...channels].sort(
+              (a, b) => b.sub_num - a.sub_num
+            );
+            sortedBySubs.forEach((ch, i) => {
+              ch.overallRank = i + 1;
             });
 
-            totalChannels.innerHTML = `Total Channels: <span>${filteredChannels.length.toLocaleString()}</span>`;
-            return filteredChannels;
+            renderChannels();
+          } catch (error) {
+            console.error("Error fetching channels:", error);
           }
+        }
+
+        function renderChannels() {
+          const searchValue = searchInput.value.toLowerCase();
+          const subFilter = filterSubSelect.value;
+          const sortValue = sortSelect.value;
+
+          let filtered = channels.filter((ch) => {
+            const matchSearch = ch.title.toLowerCase().includes(searchValue);
+
+            let matchSubs = true;
+            switch (subFilter) {
+              case "100m":
+                matchSubs = ch.sub_num >= 100000000;
+                break;
+              case "50m":
+                matchSubs = ch.sub_num >= 50000000;
+                break;
+              case "20m":
+                matchSubs = ch.sub_num >= 20000000;
+                break;
+              case "10m":
+                matchSubs = ch.sub_num >= 10000000;
+                break;
+              default:
+                matchSubs = true;
+            }
+
+            return matchSearch && matchSubs;
+          });
+
+          filtered.sort((a, b) => {
+            switch (sortValue) {
+              case "subs-desc":
+                return b.sub_num - a.sub_num;
+              case "subs-asc":
+                return a.sub_num - b.sub_num;
+              case "views-desc":
+                return b.view_num - a.view_num;
+              case "views-asc":
+                return a.view_num - b.view_num;
+              default:
+                return 0;
+            }
+          });
+
+          channelList.innerHTML = "";
+
+          filtered.forEach((channel) => {
+            const countryName = countryMap[channel.country_code] || "Unknown";
+
+            const card = document.createElement("div");
+            card.className = `
+            bg-gray-700 rounded-xl shadow-sm
+            transition duration-300 cursor-pointer p-4
+            border border-gray-600 flex flex-col hover-scale
+          `;
+
+            card.innerHTML = `
+            <div class="flex items-center mb-3">
+              <img
+                src="${channel.avatar}"
+                alt="${channel.title}"
+                class="w-16 h-16 rounded-full mr-4 object-cover"
+              />
+              <div class="text-gray-100">
+                <h3 class="text-base font-bold">
+                  #${channel.overallRank} <span class="hover:text-red-400">${
+              channel.title
+            }</span>
+                </h3>
+                <p class="text-xs text-gray-300 mt-1">ID: ${channel.id}</p>
+              </div>
+            </div>
+            <div class="space-y-1 text-sm text-gray-200">
+              <p>
+                <i class="fas fa-user-friends text-red-400 mr-1"></i>
+                <span class="font-semibold">Subscribers:</span>
+                ${channel.sub_num.toLocaleString()}
+              </p>
+              <p>
+                <i class="fas fa-eye text-red-400 mr-1"></i>
+                <span class="font-semibold">Total Views:</span>
+                ${channel.view_num.toLocaleString()}
+              </p>
+              <p>
+                <i class="fas fa-globe text-red-400 mr-1"></i>
+                <span class="font-semibold">Country:</span>
+                ${countryName}
+              </p>
+            </div>
+          `;
+
+            card.addEventListener("click", () =>
+              openModal({
+                overallRank: channel.overallRank,
+                avatar: channel.avatar,
+                title: channel.title,
+                id: channel.id,
+                subscribers: channel.sub_num,
+                views: channel.view_num,
+                country: countryName,
+              })
+            );
+
+            channelList.appendChild(card);
+          });
+
+          totalChannels.textContent = `Total Channels: ${filtered.length.toLocaleString()}`;
+        }
+
+        function openModal(ch) {
+          const {
+            overallRank,
+            avatar,
+            title,
+            id,
+            subscribers,
+            views,
+            country,
+          } = ch;
+
+          modalHeader.innerHTML = `
+          <img
+            src="${avatar}"
+            alt="${title}"
+            class="w-14 h-14 rounded-full object-cover"
+          />
+          <div>
+            <h3 class="text-lg font-bold">
+              #${overallRank} – ${title}
+            </h3>
+            <p class="text-xs text-gray-300 mt-1">
+              Channel ID: ${id}
+            </p>
+          </div>
+        `;
+
+          modalBody.innerHTML = `
+          <div class="space-y-3 mt-2">
+            <p>
+              <i class="fas fa-user-friends text-red-400 mr-1"></i>
+              <span class="font-semibold">Subscribers:</span>
+              ${subscribers.toLocaleString()}
+            </p>
+            <p>
+              <i class="fas fa-eye text-red-400 mr-1"></i>
+              <span class="font-semibold">Total Views:</span>
+              ${views.toLocaleString()}
+            </p>
+            <p>
+              <i class="fas fa-globe text-red-400 mr-1"></i>
+              <span class="font-semibold">Country:</span>
+              ${country}
+            </p>
+          </div>
+        `;
+
+          visitChannelBtn.setAttribute(
+            "href",
+            `https://www.youtube.com/channel/${id}`
+          );
+
+          channelModal.classList.remove("hidden");
+          channelModal.classList.add("show");
+        }
+
+        function closeModal() {
+          channelModal.classList.remove("show");
+          channelModal.classList.add("hidden");
+        }
+
+        closeModalBtn.addEventListener("click", closeModal);
+        channelModal.addEventListener("click", (e) => {
+          if (e.target === channelModal) {
+            closeModal();
+          }
+        });
+
+        function downloadCSV() {
+          const csvContent = [
+            [
+              "Overall Rank",
+              "Channel ID",
+              "Channel Name",
+              "Subscribers",
+              "Views",
+              "Country",
+              "Profile Picture URL",
+            ],
+            ...channels.map((ch) => [
+              ch.overallRank,
+              ch.id,
+              ch.title.replace(/[",]/g, ""),
+              ch.sub_num,
+              ch.view_num,
+              countryMap[ch.country_code] || "Unknown",
+              ch.avatar,
+            ]),
+          ]
+            .map((row) => row.join(","))
+            .join("\n");
+
+          const blob = new Blob([csvContent], {
+            type: "text/csv;charset=utf-8;",
+          });
+          const link = document.createElement("a");
+          const url = URL.createObjectURL(blob);
+          link.setAttribute("href", url);
+          link.setAttribute("download", "youtube_channels.csv");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+
+        async function init() {
+          countryMap = await fetchCountryNames();
+          await fetchChannels();
 
           searchInput.addEventListener("input", renderChannels);
           filterSubSelect.addEventListener("change", renderChannels);
           sortSelect.addEventListener("change", renderChannels);
-          excludeCompaniesCheckbox.addEventListener("change", renderChannels);
-
-          const downloadButton = document.getElementById("downloadCSV");
-          downloadButton.addEventListener("click", () => {
-            const filteredChannels = renderChannels();
-            downloadCSV(filteredChannels);
-          });
-
-          renderChannels();
-        } catch (error) {
-          console.error("Error fetching data:", error);
+          displayCountSelect.addEventListener("change", fetchChannels);
+          downloadButton.addEventListener("click", downloadCSV);
         }
-      }
 
-      function downloadCSV(filteredChannels) {
-        const csvContent = [
-          [
-            "Rank",
-            "Channel ID",
-            "Channel Name",
-            "Subscribers",
-            "Country",
-            "Profile Picture URL",
-          ],
-          ...filteredChannels.map((channel, index) => [
-            index + 1,
-            channel.id,
-            channel.title.replace(/["\,]/g, ""),
-            channel.sub_num,
-            countryMap[channel.country_code] || "Unknown",
-            channel.avatar,
-          ]),
-        ]
-          .map((row) => row.join(","))
-          .join("\n");
-
-        const blob = new Blob([csvContent], {
-          type: "text/csv;charset=utf-8;",
-        });
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", "youtube_channels.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-
-      async function fetchCountryNames() {
-        try {
-          const response = await fetch("https://restcountries.com/v3.1/all");
-          const data = await response.json();
-          const countryMap = {};
-          data.forEach((country) => {
-            const countryCode = country.cca2;
-            const countryName = country.name.common;
-            countryMap[countryCode] = countryName;
-          });
-          return countryMap;
-        } catch (error) {
-          console.error("Error fetching country names:", error);
-          return {};
-        }
-      }
+        init();
+      });
     </script>
   </body>
 </html>
