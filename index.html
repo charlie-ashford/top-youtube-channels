@@ -10,17 +10,16 @@
       href="https://api.communitrics.com/youtube/profile?channel=communitrics"
       type="image/png"
     />
-
     <meta property="og:title" content="Top YouTube Channels" />
     <meta
       property="og:description"
-      content="Explore and analyze the most popular YouTube channels"
+      content="Explore and analyze the TOP 1,000 YouTube channels"
     />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Top YouTube Channels" />
     <meta
       name="twitter:description"
-      content="Explore and analyze the most popular YouTube channels"
+      content="Explore and analyze the TOP 1,000 YouTube channels"
     />
 
     <link
@@ -199,11 +198,11 @@
           <p
             class="mt-2 text-sm sm:text-base md:text-lg text-red-100 max-w-md mx-auto leading-relaxed"
           >
-            Explore and analyze the most popular YouTube channels
+            Explore and analyze the top 1,000<br />
+            YouTube channels
           </p>
         </div>
       </div>
-
       <div class="relative">
         <svg
           class="block w-full h-2 sm:h-4 md:h-6"
@@ -236,7 +235,7 @@
 
     <div
       id="loadingSpinner"
-      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden"
+      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
     >
       <div class="flex space-x-4">
         <div class="w-6 h-6 bg-red-600 rounded-full dot-wave-1"></div>
@@ -325,6 +324,30 @@
               <i class="fas fa-download mr-2"></i>
               Download CSV
             </button>
+          </div>
+        </div>
+
+        <div class="mt-4 text-right">
+          <button
+            id="toggleAdvancedBtn"
+            class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md text-sm transition duration-300"
+          >
+            Advanced Filters
+            <i class="fas fa-caret-down ml-2"></i>
+          </button>
+        </div>
+
+        <div
+          id="advancedOptions"
+          class="rounded-xl shadow-md p-4 mt-2 bg-gradient-to-r from-gray-800 to-gray-700 bg-opacity-95 hidden"
+        >
+          <div class="flex flex-wrap gap-4">
+            <div class="min-w-[120px]">
+              <select
+                id="filterCountrySelect"
+                class="w-full px-3 py-2 border border-gray-600 rounded-md text-sm focus:border-red-500 focus:ring-2 focus:ring-red-300 focus:outline-none bg-gray-700 text-gray-100 placeholder-gray-400 shadow-sm transition duration-300"
+              ></select>
+            </div>
           </div>
         </div>
       </div>
@@ -447,17 +470,28 @@
         const totalChannels = document.getElementById("totalChannels");
         const downloadButton = document.getElementById("downloadCSV");
 
+        const toggleAdvancedBtn = document.getElementById("toggleAdvancedBtn");
+        const advancedOptions = document.getElementById("advancedOptions");
+        const filterCountrySelect = document.getElementById(
+          "filterCountrySelect"
+        );
+
         const channelModal = document.getElementById("channelModal");
         const closeModalBtn = document.getElementById("closeModal");
         const modalHeader = document.getElementById("modalHeader");
         const modalBody = document.getElementById("modalBody");
         const visitChannelBtn = document.getElementById("visitChannelBtn");
+
         const loadingSpinner = document.getElementById("loadingSpinner");
+
+        let channels = [];
+        let countryMap = {};
+        let totalPages = 0;
+        let currentPage = 1;
 
         function showLoadingSpinner() {
           loadingSpinner.classList.remove("hidden");
         }
-
         function hideLoadingSpinner() {
           const isRendered = channelList.childNodes.length > 0;
           if (isRendered) {
@@ -465,10 +499,9 @@
           }
         }
 
-        let channels = [];
-        let countryMap = {};
-        let totalPages = 0;
-        let currentPage = 1;
+        toggleAdvancedBtn.addEventListener("click", () => {
+          advancedOptions.classList.toggle("hidden");
+        });
 
         async function fetchCountryNames() {
           try {
@@ -486,6 +519,27 @@
             console.error("Error fetching country names:", error);
             return {};
           }
+        }
+
+        function populateCountrySelect(codesInUse) {
+          const sortedCodes = [...codesInUse].sort((a, b) => {
+            const nameA = countryMap[a] || "Unknown";
+            const nameB = countryMap[b] || "Unknown";
+            return nameA.localeCompare(nameB);
+          });
+
+          filterCountrySelect.innerHTML = "";
+          const allOption = document.createElement("option");
+          allOption.value = "all";
+          allOption.textContent = "Filter: Country";
+          filterCountrySelect.appendChild(allOption);
+
+          sortedCodes.forEach((cc) => {
+            const option = document.createElement("option");
+            option.value = cc;
+            option.textContent = countryMap[cc] || `Unknown`;
+            filterCountrySelect.appendChild(option);
+          });
         }
 
         async function fetchChannels(page = 1, isInitialLoad = false) {
@@ -515,6 +569,11 @@
               ch.overallRank = i + 1;
             });
 
+            const uniqueCodes = new Set(
+              channels.map((ch) => ch.country_code).filter(Boolean)
+            );
+            populateCountrySelect(uniqueCodes);
+
             renderChannels();
           } catch (error) {
             console.error("Error fetching channels:", error);
@@ -528,13 +587,14 @@
 
           const searchValue = searchInput.value.toLowerCase();
           const subFilter = filterSubSelect.value;
+          const viewFilter = filterViewsSelect.value;
           const sortValue = sortSelect.value;
+          const countryFilter = filterCountrySelect.value;
 
           let filtered = channels.filter((ch) => {
             const matchSearch = ch.title.toLowerCase().includes(searchValue);
-            let matchSubs = true;
-            let matchViews = true;
 
+            let matchSubs = true;
             switch (subFilter) {
               case "100m":
                 matchSubs = ch.sub_num >= 100000000;
@@ -552,8 +612,7 @@
                 matchSubs = true;
             }
 
-            const viewFilter =
-              document.getElementById("filterViewsSelect").value;
+            let matchViews = true;
             switch (viewFilter) {
               case "10b":
                 matchViews = ch.view_num >= 10000000000;
@@ -571,7 +630,12 @@
                 matchViews = true;
             }
 
-            return matchSearch && matchSubs && matchViews;
+            let matchCountry = true;
+            if (countryFilter !== "all") {
+              matchCountry = ch.country_code === countryFilter;
+            }
+
+            return matchSearch && matchSubs && matchViews && matchCountry;
           });
 
           filtered.sort((a, b) => {
@@ -606,12 +670,12 @@
             </div>
             
             <div class="flex items-center mb-4 relative z-10">
-<div class="w-16 h-16 rounded-full p-1 bg-gradient-to-br from-red-600 to-red-800 mr-4">
-          <img
-            src="${channel.avatar}"
-            alt="${channel.title}"
-    class="w-full h-full rounded-full object-cover object-center border-2 border-white/20"
-          />
+              <div class="w-16 h-16 rounded-full p-1 bg-gradient-to-br from-red-600 to-red-800 mr-4">
+                <img
+                  src="${channel.avatar}"
+                  alt="${channel.title}"
+                  class="w-full h-full rounded-full object-cover object-center border-2 border-white/20"
+                />
               </div>
               <div class="text-gray-100">
                 <h3 class="text-lg font-bold tracking-tight">
@@ -752,11 +816,14 @@
         async function init() {
           countryMap = await fetchCountryNames();
           await fetchChannels(1, true);
+
           searchInput.addEventListener("input", renderChannels);
           filterSubSelect.addEventListener("change", renderChannels);
           filterViewsSelect.addEventListener("change", renderChannels);
           sortSelect.addEventListener("change", renderChannels);
           displayCountSelect.addEventListener("change", () => fetchChannels(1));
+          filterCountrySelect.addEventListener("change", renderChannels);
+
           downloadButton.addEventListener("click", downloadCSV);
         }
 
