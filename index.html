@@ -439,6 +439,7 @@
       document.addEventListener("DOMContentLoaded", () => {
         const searchInput = document.getElementById("searchInput");
         const filterSubSelect = document.getElementById("filterSubSelect");
+        const filterViewsSelect = document.getElementById("filterViewsSelect");
         const sortSelect = document.getElementById("sortSelect");
         const displayCountSelect =
           document.getElementById("displayCountSelect");
@@ -753,6 +754,7 @@
           await fetchChannels(1, true);
           searchInput.addEventListener("input", renderChannels);
           filterSubSelect.addEventListener("change", renderChannels);
+          filterViewsSelect.addEventListener("change", renderChannels);
           sortSelect.addEventListener("change", renderChannels);
           displayCountSelect.addEventListener("change", () => fetchChannels(1));
           downloadButton.addEventListener("click", downloadCSV);
