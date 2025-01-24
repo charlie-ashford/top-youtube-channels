@@ -115,6 +115,60 @@
         }
       }
 
+      @media (max-width: 720px) {
+        .flex-col .flex-1 {
+          min-width: 100%;
+          margin-bottom: 8px;
+        }
+        .flex-col button {
+          width: 100%;
+        }
+        #channelList {
+          grid-template-columns: 1fr;
+        }
+        #closeModal {
+          display: none;
+        }
+        .w-16 {
+          width: 40px;
+          height: 40px;
+        }
+        .text-gray-100 h3 {
+          font-size: 0.875rem;
+        }
+        section {
+          padding: 16px;
+        }
+        .rounded-xl {
+          padding: 12px;
+        }
+        input,
+        select {
+          font-size: 14px;
+        }
+        button {
+          font-size: 14px;
+        }
+        .text-gray-300 p {
+          font-size: 0.75rem;
+        }
+        .mr-4 {
+          margin-right: 8px;
+        }
+        header .text-center {
+          padding: 20px 10px;
+        }
+        #channelModal .modal-container {
+          width: 90%;
+          max-height: 85%;
+          overflow-y: auto;
+        }
+        #channelModal .px-6 {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+      }
+
       #channelModal.show .modal-container {
         animation: fadeInModal 0.3s ease forwards;
       }
@@ -138,12 +192,12 @@
       >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
           <h1
-            class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight"
+            class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight"
           >
             <i class="fab fa-youtube mr-2 text-white"></i> Top YouTube Channels
           </h1>
           <p
-            class="mt-2 text-sm sm:text-base md:text-lg text-red-100 max-w-md mx-auto"
+            class="mt-2 text-sm sm:text-base md:text-lg text-red-100 max-w-md mx-auto leading-relaxed"
           >
             Explore and analyze the most popular YouTube channels
           </p>
@@ -194,7 +248,7 @@
     <section class="mt-4">
       <div class="max-w-7xl mx-auto px-4 sm:px-6">
         <div
-          class="rounded-xl shadow-md p-4 flex flex-wrap items-center justify-between gap-4 bg-gradient-to-r from-gray-800 to-gray-700 bg-opacity-95"
+          class="rounded-xl shadow-md p-4 flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-start sm:justify-between gap-4 bg-gradient-to-r from-gray-800 to-gray-700 bg-opacity-95"
         >
           <div
             class="flex flex-wrap items-center gap-4 flex-grow text-gray-100"
@@ -216,11 +270,24 @@
                 id="filterSubSelect"
                 class="w-full px-3 py-2 border border-gray-600 rounded-md text-sm focus:border-red-500 focus:ring-2 focus:ring-red-300 focus:outline-none bg-gray-700 text-gray-100 placeholder-gray-400 shadow-sm transition duration-300"
               >
-                <option value="all">All Channels</option>
+                <option value="all">Filter: Subscribers</option>
                 <option value="100m">100M+ Subs</option>
                 <option value="50m">50M+ Subs</option>
                 <option value="20m">20M+ Subs</option>
                 <option value="10m">10M+ Subs</option>
+              </select>
+            </div>
+
+            <div class="flex-1 min-w-[120px]">
+              <select
+                id="filterViewsSelect"
+                class="w-full px-3 py-2 border border-gray-600 rounded-md text-sm focus:border-red-500 focus:ring-2 focus:ring-red-300 focus:outline-none bg-gray-700 text-gray-100 placeholder-gray-400 shadow-sm transition duration-300"
+              >
+                <option value="all">Filter: Total views</option>
+                <option value="10b">10B+ Views</option>
+                <option value="5b">5B+ Views</option>
+                <option value="1b">1B+ Views</option>
+                <option value="500m">500M+ Views</option>
               </select>
             </div>
 
@@ -341,7 +408,7 @@
           ></div>
           <button
             id="closeModal"
-            class="absolute top-5 right-5 text-white/70 hover:text-white transition-colors rounded-full p-2 hover:bg-white/20"
+            class="absolute top-5 right-5 text-white/70 hover:text-white transition-colors rounded-full p-2 hover:bg-white/20 sm:block hidden"
           >
             <i class="fas fa-times text-xl"></i>
           </button>
@@ -465,6 +532,7 @@
           let filtered = channels.filter((ch) => {
             const matchSearch = ch.title.toLowerCase().includes(searchValue);
             let matchSubs = true;
+            let matchViews = true;
 
             switch (subFilter) {
               case "100m":
@@ -482,7 +550,27 @@
               default:
                 matchSubs = true;
             }
-            return matchSearch && matchSubs;
+
+            const viewFilter =
+              document.getElementById("filterViewsSelect").value;
+            switch (viewFilter) {
+              case "10b":
+                matchViews = ch.view_num >= 10000000000;
+                break;
+              case "5b":
+                matchViews = ch.view_num >= 5000000000;
+                break;
+              case "1b":
+                matchViews = ch.view_num >= 1000000000;
+                break;
+              case "500m":
+                matchViews = ch.view_num >= 500000000;
+                break;
+              default:
+                matchViews = true;
+            }
+
+            return matchSearch && matchSubs && matchViews;
           });
 
           filtered.sort((a, b) => {
@@ -517,11 +605,11 @@
             </div>
             
             <div class="flex items-center mb-4 relative z-10">
-              <div class="w-20 h-20 rounded-full p-1 bg-gradient-to-br from-red-600 to-red-800 mr-4">
+<div class="w-16 h-16 rounded-full p-1 bg-gradient-to-br from-red-600 to-red-800 mr-4">
           <img
             src="${channel.avatar}"
             alt="${channel.title}"
-            class="w-full h-full rounded-full object-cover object-center border-2 border-white/20"
+    class="w-full h-full rounded-full object-cover object-center border-2 border-white/20"
           />
               </div>
               <div class="text-gray-100">
